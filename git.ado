@@ -1,4 +1,3 @@
-*! version 1.0.0 Matthew White 11feb2014
 pr git, rclass
 	vers 9
 
