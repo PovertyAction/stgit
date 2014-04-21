@@ -8,6 +8,6 @@ estimates clear
 regress weight length
 estimates store est1
 
-stgit .
+stgit ..
 esttab est1 using mytable.csv, replace nonotes ///
 	addnotes("Git branch: `r(branch)'" "Git SHA of last commit: `r(sha)'")
