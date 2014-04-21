@@ -1,4 +1,4 @@
-pr git, rclass
+pr stgit, rclass
 	vers 9
 
 	syntax anything(name=dir id="repository directory")
