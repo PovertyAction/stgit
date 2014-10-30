@@ -1,5 +1,5 @@
 pr stgit9, rclass
-	vers 9
+	vers 9.2
 
 	syntax anything(name=dir id="repository directory")
 
