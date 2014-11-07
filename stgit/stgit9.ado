@@ -1,23 +1,15 @@
 pr stgit9, rclass
 	vers 9.2
 
-	syntax anything(name=dir id="repository directory")
-
-	gettoken dir rest : dir
-	if `:length loc rest' {
-		di as err "invalid repository directory"
-		ex 198
+	stgit_parse `0'
+	foreach param in subcmd git_dir {
+		mata: st_local("`param'", st_global("s(`param')"))
 	}
 
-	loc gitdir "`dir'/.git"
-	mata: st_local("exists", strofreal(direxists(st_local("gitdir"))))
-	if !`exists' {
-		di as err "directory `gitdir' not found"
-		ex 601
-	}
+	assert "`subcmd'" == "status"
 
 	tempname fh
-	file open `fh' using "`gitdir'/HEAD", r
+	file open `fh' using "`git_dir'/HEAD", r
 	file r `fh' ref
 	file r `fh' blank
 	loc eof = r(eof)
@@ -29,7 +21,7 @@ pr stgit9, rclass
 	loc ref = subinstr("`ref'", "ref: ", "", 1)
 	loc branch = subinstr("`ref'", "refs/heads/", "", 1)
 
-	file open `fh' using "`gitdir'/`ref'", r
+	file open `fh' using "`git_dir'/`ref'", r
 	file r `fh' sha
 	file r `fh' blank
 	loc eof = r(eof)
@@ -43,6 +35,7 @@ pr stgit9, rclass
 	di as txt "Branch: " as res "`branch'"
 	di as txt "SHA-1 hash of last commit: " as res "`sha'"
 
+	ret loc git_dir "`git_dir'"
 	ret loc branch "`branch'"
 	ret loc sha `sha'
 end
