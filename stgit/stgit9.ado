@@ -31,9 +31,7 @@ pr stgit9, rclass
 		ex 198
 	}
 
-	di
-	di as txt "Branch: " as res "`branch'"
-	di as txt "SHA-1 hash of last commit: " as res "`sha'"
+	stgit_summary, branch(`branch') sha(`sha')
 
 	ret loc git_dir "`git_dir'"
 	ret loc branch "`branch'"
