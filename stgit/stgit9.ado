@@ -44,7 +44,7 @@ pr stgit9, rclass
 		/*NOTREACHED*/
 	}
 
-	stgit_summary, branch(`branch') sha(`sha')
+	stgit_summary, branch(`"`branch'"') sha(`sha')
 
 	ret loc git_dir "`git_dir'"
 	ret loc branch "`branch'"
