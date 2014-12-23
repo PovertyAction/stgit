@@ -8,27 +8,40 @@ pr stgit9, rclass
 
 	assert "`subcmd'" == "status"
 
+	loc fn "`git_dir'/HEAD"
+	cap conf f `"`fn'"'
+	if _rc {
+		stgit_error retrieve_head
+		/*NOTREACHED*/
+	}
 	tempname fh
-	file open `fh' using "`git_dir'/HEAD", r
+	file open `fh' using `"`fn'"', r
 	file r `fh' ref
 	file r `fh' blank
 	loc eof = r(eof)
 	file close `fh'
 	if !strmatch("`ref'", "ref: refs/heads/*") | `:length loc blank' | !`eof' {
-		di as err "invalid HEAD"
-		ex 198
+		stgit_error invalid_head
+		/*NOTREACHED*/
 	}
 	loc ref = subinstr("`ref'", "ref: ", "", 1)
 	loc branch = subinstr("`ref'", "refs/heads/", "", 1)
 
-	file open `fh' using "`git_dir'/`ref'", r
+	loc fn "`git_dir'/`ref'"
+	cap conf f `"`fn'"'
+	if _rc {
+		stgit_error invalid_branch
+		/*NOTREACHED*/
+	}
+	file open `fh' using `"`fn'"', r
 	file r `fh' sha
 	file r `fh' blank
 	loc eof = r(eof)
 	file close `fh'
 	if !regexm("`sha'", "^[a-z0-9]+$") | `:length loc blank' | !`eof' {
-		di as err "`ref': invalid branch ref"
-		ex 198
+		di as err "`ref': invalid reference"
+		stgit_error invalid_branch
+		/*NOTREACHED*/
 	}
 
 	stgit_summary, branch(`branch') sha(`sha')
