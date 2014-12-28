@@ -120,6 +120,7 @@ mata: st_global("git_dir", pathjoin(pwd(), ".git"))
 glo sha 2f4069329e877d25890d80811b84cec03f55eec7
 pr check_results9
 	assert `"`r(git_dir)'"' == `"$git_dir"'
+	assert !r(has_detached_head)
 	assert "`r(branch)'"    == "master"
 	assert "`r(sha)'"       == "$sha"
 end
@@ -184,10 +185,22 @@ rcof "noi stgit .,git_dir(./.git)" == 101
 loc branch master-copy
 !git checkout `branch'
 stgit
+assert !r(has_detached_head)
 assert "`r(branch)'" == "`branch'"
 !git checkout master
 stgit
 check_results_clean
+
+* Detached head
+!git checkout $sha
+stgit
+assert `"`r(git_dir)'"' == `"$git_dir"'
+assert r(has_detached_head) == 1
+assert "`r(branch)'"    == "$sha"
+assert "`r(sha)'"       == "$sha"
+assert13 r(is_clean) == 1
+assert13 !r(has_uncommitted_changes)
+!git checkout master
 
 * New files
 * Untracked

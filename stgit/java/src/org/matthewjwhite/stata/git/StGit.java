@@ -11,7 +11,8 @@ import com.stata.sfi.Macro;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.lib.ObjectId;
+import org.eclipse.jgit.lib.Constants;
+import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.matthewjwhite.stata.macro.MacroList;
@@ -98,25 +99,21 @@ public class StGit {
 	}
 
 	private static void status(Repository repo) throws StGitException {
-		String branch = null;
+		Ref head;
 		try {
-			branch = repo.getBranch();
-		}
-		catch (IOException e) {
-			throw new StGitException("invalid_branch", e);
-		}
-		Macro.setLocal("branch", branch);
-
-		ObjectId head = null;
-		try {
-			head = repo.resolve("HEAD");
+			head = repo.getRef(Constants.HEAD);
 		}
 		catch (IOException e) {
 			throw new StGitException("invalid_head", e);
 		}
 		if (head == null)
 			throw new StGitException("retrieve_head");
-		Macro.setLocal("sha", head.name());
+		String sha = head.getObjectId().name();
+		Macro.setLocal("sha", sha);
+		boolean detached = !head.isSymbolic();
+		Macro.setLocal("has_detached_head", Conversion.string(detached));
+		Macro.setLocal("branch", detached ? sha :
+			head.getTarget().getName().replaceFirst("refs/heads/", ""));
 
 		Status status = null;
 		try {

@@ -20,33 +20,65 @@ pr stgit9, rclass
 	file r `fh' blank
 	loc eof = r(eof)
 	file close `fh'
-	if !strmatch("`ref'", "ref: refs/heads/*") | `:length loc blank' | !`eof' {
+	loc valid = !`:length loc blank' & `eof'
+	if `valid' {
+		loc detached = !strmatch("`ref'", "ref: refs/heads/*")
+		if `detached' ///
+			mata: is_sha("ref", "valid")
+	}
+	if !`valid' {
 		stgit_error invalid_head
 		/*NOTREACHED*/
 	}
-	loc ref = subinstr("`ref'", "ref: ", "", 1)
-	loc branch = subinstr("`ref'", "refs/heads/", "", 1)
 
-	loc fn "`git_dir'/`ref'"
-	cap conf f `"`fn'"'
-	if _rc {
-		stgit_error invalid_branch
-		/*NOTREACHED*/
+	if `detached' {
+		loc sha    `ref'
+		loc branch `sha'
 	}
-	file open `fh' using `"`fn'"', r
-	file r `fh' sha
-	file r `fh' blank
-	loc eof = r(eof)
-	file close `fh'
-	if !regexm("`sha'", "^[a-z0-9]+$") | `:length loc blank' | !`eof' {
-		di as err "`ref': invalid reference"
-		stgit_error invalid_branch
-		/*NOTREACHED*/
-	}
+	else {
+		loc ref = subinstr("`ref'", "ref: ", "", 1)
+		loc branch = subinstr("`ref'", "refs/heads/", "", 1)
 
-	stgit_summary, branch(`"`branch'"') sha(`sha')
+		loc fn "`git_dir'/`ref'"
+		cap conf f `"`fn'"'
+		if _rc {
+			stgit_error invalid_branch
+			/*NOTREACHED*/
+		}
+		file open `fh' using `"`fn'"', r
+		file r `fh' sha
+		file r `fh' blank
+		loc eof = r(eof)
+		file close `fh'
+		mata: is_sha("sha", "is_sha")
+		if !`is_sha' | `:length loc blank' | !`eof' {
+			di as err "`ref': invalid reference"
+			stgit_error invalid_branch
+			/*NOTREACHED*/
+		}
+	}
 
 	ret loc git_dir "`git_dir'"
+	ret sca has_detached_head = `detached'
 	ret loc branch "`branch'"
 	ret loc sha `sha'
+
+	stgit_summary, detached(`return(has_detached_head)') ///
+		branch(`"`return(branch)'"') sha(`return(sha)')
+end
+
+vers 9.2
+
+loc SS	string scalar
+
+loc LclNameS	`SS'
+
+mata:
+void is_sha(`LclNameS' _sha, `LclNameS' _is_sha)
+{
+	`SS' sha
+
+	sha = st_local(_sha)
+	st_local(_is_sha, strofreal(strlen(sha) == 40 & regexm(sha, "^[0-9a-f]+$")))
+}
 end
