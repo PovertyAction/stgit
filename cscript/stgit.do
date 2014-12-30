@@ -12,9 +12,9 @@ local profile 1
 * Check the parameters.
 assert inlist(`profile', 0, 1)
 
-* Set the working directory to the stata-git-tools directory.
-c sgt
-cd stgit/cscript
+* Set the working directory to the stgit directory.
+c stgit
+cd cscript
 
 cap log close stgit
 log using stgit, name(stgit) s replace
@@ -49,8 +49,11 @@ if c(stata_version) >= 13 {
 	loc dir ..
 	loc files : dir "`dir'" file *
 	foreach file of loc files {
-		matawarn "`dir'/`file'"
-		assert !r(warn)
+		mata: st_local("ext", pathsuffix(st_local("file")))
+		if inlist("`ext'", ".ado", ".mata") {
+			matawarn "`dir'/`file'"
+			assert !r(warn)
+		}
 	}
 	cscript
 }
