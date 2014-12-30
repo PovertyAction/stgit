@@ -118,7 +118,7 @@ pushd: c stgit_cscript
 * Simple test of -stgit status-
 stgit status
 mata: st_global("git_dir", pathjoin(pwd(), ".git"))
-glo sha 2f4069329e877d25890d80811b84cec03f55eec7
+glo sha 24eb48b2fa42301c5f7fb7bc8cb9af3860528147
 pr check_results9
 	assert `"`r(git_dir)'"' == `"$git_dir"'
 	assert !r(has_detached_head)
