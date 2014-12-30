@@ -59,7 +59,7 @@ pinpointing the code that produced the files.
 
 {pstd}
 The GitHub repository for {cmd:stgit} is
-{browse "https://github.com/matthew-white/stata-git-tools":here}.
+{browse "https://github.com/matthew-white/stgit":here}.
 
 
 {marker options}{...}
