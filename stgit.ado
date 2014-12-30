@@ -1,3 +1,4 @@
+*! version 1.0.0 Matthew White 30dec2014
 pr stgit, rclass
 	vers 9.2
 
