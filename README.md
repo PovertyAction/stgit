@@ -1,7 +1,7 @@
 stgit
 =====
 
-`stgit` is a Stata program that retrieves information about a Git repository.
+`stgit` is a Stata program that retrieves information about a Git repository. The latest version is available through SSC: type `ssc install stgit` in Stata to install.
 
 Contributing
 ------------
