@@ -144,8 +144,10 @@ The help file looks best when viewed in Stata as SMCL.
 <p>
 <a name="author"></a><b><u>Author</u></b>
 <p>
-    Matthew White, Innovations for Poverty Action
-    mwhite@poverty-action.org
+    Matthew White
+<p>
+    For questions or suggestions, submit a GitHub issue or e-mail
+    researchsupport@poverty-action.org.
 <p>
 <p>
 <b><u>Also see</u></b>
